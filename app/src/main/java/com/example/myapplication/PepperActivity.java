@@ -16,6 +16,7 @@ import android.app.Notification;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import com.aldebaran.qi.sdk.QiSDK;
 
 import com.aldebaran.qi.sdk.RobotLifecycleCallbacks;
 
+import com.aldebaran.qi.sdk.builder.AnimateBuilder;
 import com.aldebaran.qi.sdk.builder.AnimationBuilder;
 import com.aldebaran.qi.sdk.builder.HolderBuilder;
 import com.aldebaran.qi.sdk.builder.SayBuilder;
@@ -34,6 +36,7 @@ import com.aldebaran.qi.sdk.design.activity.RobotActivity;
 
 import com.aldebaran.qi.sdk.object.actuation.Animate;
 import com.aldebaran.qi.sdk.object.actuation.Animate;
+import com.aldebaran.qi.sdk.object.actuation.Animation;
 import com.aldebaran.qi.sdk.object.conversation.QiChatExecutor;
 import com.aldebaran.qi.sdk.object.conversation.Say;
 import com.aldebaran.qi.sdk.object.holder.AutonomousAbilitiesType;
@@ -56,10 +59,14 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pepper);
+        setContentView(R.layout.pepper_activity);
 
         QiSDK.register(this, this);
         Log.i("RoboticActivity", "Enter into RobotActivity");
+
+        findViewById(R.id.textView2).setOnClickListener(v -> {
+            greet();
+        });
 
 //        buttonSayHello=findViewById(R.id.button_say_hello);
 //        buttonSayHello.setOnClickListener(new View.OnClickListener() {
@@ -82,26 +89,12 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
         // The robot focus is gained.
         Log.i("RoboticActivity", "Robot focus gained");
         this.qiContext = qiContext;
-        // Perform actions with the robot
-
-        // Creating a Say action to make Pepper say
-        Say sayGreeting = SayBuilder.with(qiContext)
-                .withText("Hello, I am Pepper. Nice to meet you!")
-                .build();
-
-        // Animation action for greeting movements
-        Animate greetAnimation = (Animate) AnimationBuilder.with(qiContext)
-                .withResources(R.raw.clapping_b001)  //  testing with clapping animation resource
-                .build();
-        // Run the Say action and Animation action concurrently
-        sayGreeting.run();
-        greetAnimation.run();
 
         // Update the TextView to notify that the Say action is done.
-        runOnUiThread(() -> {
+        /*runOnUiThread(() -> {
             Intent intent = new Intent(PepperActivity.this, MainActivity.class);
             startActivity(intent);
-        });
+        });*/
 
     }
 
@@ -117,12 +110,31 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
         Log.i("RoboticActivity", "Robot focus refused: " + reason);
     }
 
-//    private void greet() {
-//        if (qiContext == null) {
-//            return;
-//        }
-//        Log.i("RoboticActivity","enter into greetings function");
-//
-//
-//    }
+    private void greet() {
+        if (qiContext == null) {
+            return;
+        }
+
+        new Thread(() -> {
+            Log.i("RoboticActivity","enter into greetings function");
+
+            // Creating a Say action to make Pepper say
+            Say sayGreeting = SayBuilder.with(qiContext)
+                    .withText("Hello, I am Pepper. Nice to meet you!")
+                    .build();
+
+            // Animation action for greeting movements
+            Animation greetAnimation = AnimationBuilder.with(qiContext)
+                    .withResources(R.raw.clapping_b001)  //  testing with clapping animation resource
+                    .build();
+            Animate animate = AnimateBuilder.with(qiContext)
+                    .withAnimation(greetAnimation)
+                    .build();
+            // Run the Say action and Animation action concurrently
+            sayGreeting.run();
+            animate.async().run();
+
+        }).start();
+
+    }
 }
