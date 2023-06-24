@@ -64,7 +64,7 @@ public class splashscreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 //        QiSDK.register(this, this);
         setContentView(R.layout.activity_splashscreen);
-        ImageView imageView= findViewById(R.id.splashapp);
+        ImageView imageView= findViewById(R.id.splashApp);
         up= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.up);
         imageView.setAnimation(up);
 
@@ -80,7 +80,7 @@ public class splashscreen extends AppCompatActivity {
             public void run() {
 //                makeRobotSpeak();
 //                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                Intent intent =new Intent(splashscreen.this, PepperActivity.class);
+                Intent intent =new Intent(splashscreen.this, MainActivity.class);
                 startActivity(intent);
 
 
@@ -94,63 +94,6 @@ public class splashscreen extends AppCompatActivity {
 
 
 
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        QiSDK.register(this, this);
-//    }
-
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        QiSDK.unregister(this, this);
-//    }
-
-//
-//    @Override
-//    protected void onDestroy() {
-//        QiSDK.unregister(this, this);
-//        super.onDestroy();
-//    }
-
-
-//    @Override
-//    public void onRobotFocusGained(QiContext qiContext) {
-//        Log.i("TAG","Robot focus gained");
-////        this.qiContext = qiContext;
-//        // Create a new say action.
-//        Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-//                .withText("Hello human!") // Set the text to say.
-//                .build(); // Build the say action.
-//
-//        // Execute the action.
-//        say.run();
-//    }
-
-//    @Override
-//    public void onRobotFocusLost() {
-//
-//        Log.i("TAG", "Robot Focus lost");
-//        // Release any resources or stop ongoing actions here
-//    }
-//
-//    private void makeRobotSpeak() {
-//        Log.i("TAG","ROBOT IS GOING TO START SPEAK");
-//        if (qiContext != null) {
-//            Say say = SayBuilder.with(qiContext)
-//                    .withText("Hello, I am a robot.")
-//                    .build();
-//            say.run();
-//        }
-//    }
-
-//    @Override
-//    public void onRobotFocusRefused(String reason) {
-//
-//        Log.i("TAG", "Robot Focus refused because " + reason);
-//        // The robot focus is refused.
-//    }
 
 
 

@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feedbackActivity"
     android:background="@drawable/background"
-    >
+    tools:context=".feedbackActivity">
 
     <pl.droidsonroids.gif.GifImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/gifImageView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:src="@drawable/party"
-        ></pl.droidsonroids.gif.GifImageView>
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></pl.droidsonroids.gif.GifImageView>
 
 
     <ImageView
         android:id="@+id/starOne"
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
+        android:layout_height="0dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="150dp"
         android:layout_marginTop="130dp"
-        android:layout_marginEnd="400dp"
-        android:src="@drawable/baseline_star_24" />
+        android:src="@drawable/baseline_star_24"
+        app:layout_constraintBottom_toBottomOf="@+id/starThree"
+        app:layout_constraintStart_toStartOf="@+id/gifImageView2"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/starTwo"
         android:layout_width="wrap_content"
@@ -36,8 +41,10 @@
         android:layout_alignParentEnd="true"
         android:layout_marginStart="400dp"
         android:layout_marginTop="80dp"
-        android:layout_marginEnd="400dp"
-        android:src="@drawable/baseline_star_24" />
+        android:src="@drawable/baseline_star_24"
+        app:layout_constraintStart_toStartOf="@+id/gifImageView2"
+        app:layout_constraintTop_toTopOf="@+id/gifImageView2" />
+
     <ImageView
         android:id="@+id/starThree"
         android:layout_width="wrap_content"
@@ -47,44 +54,53 @@
         android:layout_alignParentEnd="true"
         android:layout_marginStart="500dp"
         android:layout_marginTop="130dp"
-        android:layout_marginEnd="280dp"
-        android:src="@drawable/baseline_star_24" />
+        android:src="@drawable/baseline_star_24"
+        app:layout_constraintStart_toStartOf="@+id/gifImageView2"
+        app:layout_constraintTop_toTopOf="@+id/gifImageView2" />
 
     <TextView
         android:id="@+id/appname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Level Completed"
-        android:textSize="35dp"
-        android:textColor="#FFF504"
-        android:textStyle="bold"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="250dp"/>
+        android:layout_marginStart="104dp"
+        android:layout_marginBottom="124dp"
+        android:text="Level Completed"
+        android:textColor="#FFF504"
+        android:textSize="35dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/again"
+        app:layout_constraintStart_toEndOf="@+id/again" />
 
     <ImageView
         android:id="@+id/replay"
-        android:layout_width="211dp"
+        android:layout_width="0dp"
         android:layout_height="80dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="39dp"
-        android:layout_marginTop="433dp"
-        android:layout_marginEnd="713dp"
-        android:src="@drawable/baseline_replay_circle_filled_24" />
+        android:layout_marginEnd="59dp"
+        android:layout_marginBottom="56dp"
+        android:src="@drawable/baseline_replay_circle_filled_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/again" />
 
     <ImageView
         android:id="@+id/again"
-        android:layout_width="211dp"
-        android:layout_height="80dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="727dp"
-        android:layout_marginTop="435dp"
-        android:layout_marginEnd="27dp"
-        android:src="@drawable/baseline_play_circle_24" />
+        android:layout_marginStart="31dp"
+        android:layout_marginEnd="450dp"
+        android:src="@drawable/baseline_play_circle_24"
+        app:layout_constraintBottom_toBottomOf="@+id/replay"
+        app:layout_constraintEnd_toStartOf="@+id/replay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/replay" />
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

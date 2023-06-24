@@ -54,6 +54,7 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
 
 //    AppCompatButton buttonSayHello;
     TextView textView;
+    Button button;
     private QiContext qiContext;
 
     @Override
@@ -64,9 +65,18 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
         QiSDK.register(this, this);
         Log.i("RoboticActivity", "Enter into RobotActivity");
 
-        findViewById(R.id.textView2).setOnClickListener(v -> {
+//        findViewById(R.id.textView2).setOnClickListener(v -> {
+//            greet();
+//            Intent intent =new Intent(PepperActivity.this, splashscreen.class);
+//            startActivity(intent);
+//        });
+        findViewById(R.id.button).setOnClickListener(v -> {
             greet();
+            Intent intent =new Intent(PepperActivity.this, splashscreen.class);
+            startActivity(intent);
+
         });
+
 
 //        buttonSayHello=findViewById(R.id.button_say_hello);
 //        buttonSayHello.setOnClickListener(new View.OnClickListener() {
@@ -131,7 +141,7 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
                     .withAnimation(greetAnimation)
                     .build();
             // Run the Say action and Animation action concurrently
-            sayGreeting.run();
+            sayGreeting.async().run();
             animate.async().run();
 
         }).start();
