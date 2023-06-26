@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Animation xmlns:editor="http://www.ald.softbankrobotics.com/animation/editor" typeVersion="2.0" editor:fps="25">
-    <editor:clip editor:fps="25" editor:startFrame="0" editor:endFrame="2184"/>
+    <editor:clip editor:fps="25" editor:startFrame="0" editor:endFrame="2178"/>
     <ActuatorCurve fps="25" actuator="HeadYaw" mute="false" unit="degree">
         <Key value="-0.439454377" frame="2">
             <Tangent side="right" abscissaParam="12.6666667" ordinateParam="0" editor:interpType="bezier_auto"/>

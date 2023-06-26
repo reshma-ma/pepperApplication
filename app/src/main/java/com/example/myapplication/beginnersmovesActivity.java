@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 //import android.view.View;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,70 +19,205 @@ import java.util.concurrent.TimeUnit;
 
 import android.widget.ImageView;
 
+import com.aldebaran.qi.sdk.QiContext;
+import com.aldebaran.qi.sdk.QiSDK;
+import com.aldebaran.qi.sdk.RobotLifecycleCallbacks;
+import com.aldebaran.qi.sdk.builder.AnimateBuilder;
+import com.aldebaran.qi.sdk.builder.AnimationBuilder;
+import com.aldebaran.qi.sdk.builder.SayBuilder;
+import com.aldebaran.qi.sdk.design.activity.RobotActivity;
+import com.aldebaran.qi.sdk.object.actuation.Animate;
+import com.aldebaran.qi.sdk.object.actuation.Animation;
+import com.aldebaran.qi.sdk.object.conversation.Say;
 
 
-
-public class beginnersmovesActivity extends AppCompatActivity {
+public class beginnersmovesActivity extends RobotActivity implements RobotLifecycleCallbacks {
+//public class beginnersmovesActivity extends AppCompatActivity {
 
 
     MediaPlayer player;
     ImageView imageView;
+    private QiContext qiContext;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_beginnersmoves);
-        Intent intent = getIntent();
+        QiSDK.register(this, this);
+        teachDance();
+
+        Intent intent =new Intent(beginnersmovesActivity.this, zumbaDance.class);
+        startActivity(intent);
+//        Intent intent = getIntent();
 
 
 
 
 
-    }
-
-    public void play(View v){
-        if(player==null){
-            player =MediaPlayer.create(this,R.raw.zumbasong);
-            player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    stopPlayer();
-                }
-            });
-        }
-        player.start();
-
-
-    }
-
-    public void pause(View v){
-
-        if(player!=null){
-            player.pause();
-        }
-
-    }
-
-    public void stop(View v){
-        stopPlayer();
-    }
-
-    private void stopPlayer(){
-        if(player!=null){
-            player.release();
-            player=null;
-            Toast.makeText(this, "level completed", Toast.LENGTH_SHORT).show();
-            Intent intent =new Intent(beginnersmovesActivity.this, feedbackActivity.class);
-            startActivity(intent);
-        }
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        stopPlayer();
+    protected void onDestroy() {
+        // Unregister the RobotLifecycleCallbacks
+        QiSDK.unregister(this, this);
+        super.onDestroy();
     }
+
+    @Override
+    public void onRobotFocusGained(QiContext qiContext) {
+        // The robot focus is gained.
+        Log.i("RoboticActivity", "Robot focus gained");
+        this.qiContext = qiContext;
+
+
+
+    }
+
+    @Override
+    public void onRobotFocusLost() {
+        // The robot focus is lost.
+        Log.i("RoboticActivity", "Robot focus lost");
+    }
+
+    @Override
+    public void onRobotFocusRefused(String reason) {
+        // The robot focus is refused.
+        Log.i("RoboticActivity", "Robot focus refused: " + reason);
+    }
+
+
+
+
+
+//    public void play(View v){
+//        if(player==null){
+//            player =MediaPlayer.create(this,R.raw.zumbasong);
+//            player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                @Override
+//                public void onCompletion(MediaPlayer mp) {
+//                    stopPlayer();
+//                }
+//            });
+//        }
+//        player.start();
+//
+//
+//    }
+
+//    public void pause(View v){
+//
+//        if(player!=null){
+//            player.pause();
+//        }
+//
+//    }
+
+//    public void stop(View v){
+//        stopPlayer();
+//    }
+
+//    private void stopPlayer(){
+//        if(player!=null){
+//            player.release();
+//            player=null;
+//            Toast.makeText(this, "level completed", Toast.LENGTH_SHORT).show();
+//            Intent intent =new Intent(beginnersmovesActivity.this, feedbackActivity.class);
+//            startActivity(intent);
+//        }
+//    }
+
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        stopPlayer();
+//    }
+
+    private void teachDance() {
+        Log.i("RoboticActivity","enter into teachDance function entry");
+        if (qiContext == null) {
+            Log.i("RoboticActivity","qicontext is null");
+            return;
+        }
+
+        new Thread(() -> {
+            Log.i("RoboticActivity","enter into teachDance function thread");
+
+            // Creating a Say action to make Pepper say
+            Say sayBegin = SayBuilder.with(qiContext)
+                    .withText("Lets start beginner level!. I can teach you some steps before playing song.Every change comes from small begining.")
+                    .build();
+
+            // Animation action for greeting movements
+            Animation teachAnimation = AnimationBuilder.with(qiContext)
+                    .withResources(R.raw.levelwelcome)  //  testing with clapping animation resource
+                    .build();
+            Animate animate = AnimateBuilder.with(qiContext)
+                    .withAnimation(teachAnimation)
+                    .build();
+            // Run the Say action and Animation action concurrently
+            sayBegin.async().run();
+            animate.run();
+
+            // Creating a Say action to make Pepper say
+            Say sayFirstStep = SayBuilder.with(qiContext)
+                    .withText("first head movement.")
+                    .build();
+
+            // Animation action for first step movements
+            Animation firstStep = AnimationBuilder.with(qiContext)
+                    .withResources(R.raw.firststep)
+                    .build();
+            Animate firstStepAnimate = AnimateBuilder.with(qiContext)
+                    .withAnimation(firstStep)
+                    .build();
+
+            // Run the Say action and Animation action concurrently
+            sayFirstStep.async().run();
+            firstStepAnimate.run();
+
+            // Creating a Say  second step action to make Pepper say
+            Say saySecondStep = SayBuilder.with(qiContext)
+                    .withText("second keep both legs in small distance then raise hands and put them down slowly like this")
+                    .build();
+
+            // Animation action for first step movements
+            Animation secondStep = AnimationBuilder.with(qiContext)
+                    .withResources(R.raw.secondstep)
+                    .build();
+            Animate secondStepAnimate = AnimateBuilder.with(qiContext)
+                    .withAnimation(secondStep)
+                    .build();
+
+            saySecondStep.async().run();
+            secondStepAnimate.run();
+
+            // Creating a Say  second step action to make Pepper say
+            Say sayRepeatStep = SayBuilder.with(qiContext)
+                    .withText("We have some other interesting steps also. Lets play music and repeat steps with me.Lets move!")
+                    .build();
+
+            // Animation action for first step movements
+            Animation repeatStep = AnimationBuilder.with(qiContext)
+                    .withResources(R.raw.introduction)
+                    .build();
+            Animate repeatStepAnimate = AnimateBuilder.with(qiContext)
+                    .withAnimation(repeatStep)
+                    .build();
+
+            sayRepeatStep.async().run();
+            repeatStepAnimate.async().run();
+
+
+        }).start();
+
+    }
+
+
+
+
+
 }
 
 
@@ -93,27 +229,6 @@ public class beginnersmovesActivity extends AppCompatActivity {
 
 
 
-//        timerView=findViewById(R.id.timer);
-//
-//        long duration= TimeUnit.MINUTES.toMillis(1);
-//        new CountDownTimer(duration, 1000) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                String sDuration=String.format(Locale.ENGLISH,"%02d : %02d",TimeUnit.MILLISECONDS.toMinutes(1),
-//                        TimeUnit.MILLISECONDS.toSeconds(1) -
-//                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(1)));
-//
-//                timerView.setText(sDuration);
-//            }
-//
-//            @Override
-//            public void onFinish() {
-////                timerView.setText("done!");
-//                timerView.setVisibility(View.GONE);
-//                Toast.makeText(beginnersmovesActivity.this, "countdown timer has ended", Toast.LENGTH_SHORT).show();
-//
-//            }
-//        }.start();
 
 
 

@@ -121,12 +121,14 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
     }
 
     private void greet() {
+        Log.i("RoboticActivity","enter into greetings function entry");
         if (qiContext == null) {
+            Log.i("RoboticActivity","qicontext is null");
             return;
         }
 
         new Thread(() -> {
-            Log.i("RoboticActivity","enter into greetings function");
+            Log.i("RoboticActivity","enter into greetings function thread");
 
             // Creating a Say action to make Pepper say
             Say sayGreeting = SayBuilder.with(qiContext)
@@ -135,7 +137,7 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
 
             // Animation action for greeting movements
             Animation greetAnimation = AnimationBuilder.with(qiContext)
-                    .withResources(R.raw.clapping_b001)  //  testing with clapping animation resource
+                    .withResources(R.raw.hello_a010)  //  testing with clapping animation resource
                     .build();
             Animate animate = AnimateBuilder.with(qiContext)
                     .withAnimation(greetAnimation)

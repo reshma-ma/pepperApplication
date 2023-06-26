@@ -21,16 +21,24 @@ import com.aldebaran.qi.sdk.QiSDK;
 
 import com.aldebaran.qi.sdk.RobotLifecycleCallbacks;
 
+import com.aldebaran.qi.sdk.builder.AnimateBuilder;
 import com.aldebaran.qi.sdk.builder.AnimationBuilder;
 import com.aldebaran.qi.sdk.builder.HolderBuilder;
+import com.aldebaran.qi.sdk.builder.ListenBuilder;
+import com.aldebaran.qi.sdk.builder.PhraseSetBuilder;
 import com.aldebaran.qi.sdk.builder.SayBuilder;
 
 import com.aldebaran.qi.sdk.design.activity.RobotActivity;
 
 import com.aldebaran.qi.sdk.object.actuation.Animate;
+import com.aldebaran.qi.sdk.object.actuation.Animation;
+import com.aldebaran.qi.sdk.object.conversation.Listen;
+import com.aldebaran.qi.sdk.object.conversation.ListenResult;
+import com.aldebaran.qi.sdk.object.conversation.PhraseSet;
 import com.aldebaran.qi.sdk.object.conversation.Say;
 import com.aldebaran.qi.sdk.object.holder.AutonomousAbilitiesType;
 import com.aldebaran.qi.sdk.object.holder.Holder;
+import com.aldebaran.qi.sdk.util.PhraseSetUtil;
 
 import android.widget.ImageView;
 
@@ -38,16 +46,21 @@ import android.widget.ImageView;
 
 
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends RobotActivity implements RobotLifecycleCallbacks {
+//public class MainActivity extends AppCompatActivity {
 
 
     AppCompatButton btnbeginer,btncomplex,btnadvanced;
+    private QiContext qiContext;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        QiSDK.register(this, this);
         Toolbar toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -84,92 +97,114 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    protected void onDestroy() {
+        // Unregister the RobotLifecycleCallbacks
+        QiSDK.unregister(this, this);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onRobotFocusGained(QiContext qiContext) {
+        // The robot focus is gained.
+        Log.i("RoboticActivity", "Robot focus gained");
+        this.qiContext = qiContext;
+
+        // Update the TextView to notify that the Say action is done.
+        /*runOnUiThread(() -> {
+            Intent intent = new Intent(PepperActivity.this, MainActivity.class);
+            startActivity(intent);
+        });*/
+
+    }
+
+    @Override
+    public void onRobotFocusLost() {
+        // The robot focus is lost.
+        Log.i("RoboticActivity", "Robot focus lost");
+    }
+
+    @Override
+    public void onRobotFocusRefused(String reason) {
+        // The robot focus is refused.
+        Log.i("RoboticActivity", "Robot focus refused: " + reason);
+    }
+
+
+    private void chooseLevel() {
+        Log.i("RoboticActivity","enter into chooselevel function entry");
+        if (qiContext == null) {
+            Log.i("RoboticActivity","qicontext is null");
+            return;
+        }
+
+        new Thread(() -> {
+            Log.i("RoboticActivity","enter into choose level function thread");
+
+            // Creating a Say action to make Pepper say
+            Say sayGreeting = SayBuilder.with(qiContext)
+                    .withText("I can show you how to do zumba dance. I have three levels for your interest. one beginner level,two complex level, three advance level. Which level do you prefer?")
+                    .build();
+
+            // Animation action for greeting movements
+            Animation greetAnimation = AnimationBuilder.with(qiContext)
+                    .withResources(R.raw.chooselevel)  //  testing with clapping animation resource
+                    .build();
+            Animate animate = AnimateBuilder.with(qiContext)
+                    .withAnimation(greetAnimation)
+                    .build();
+            // Run the Say action and Animation action concurrently
+            sayGreeting.async().run();
+            animate.async().run();
+
+            // Create the PhraseSet 1.
+            PhraseSet phraseSetone = PhraseSetBuilder.with(qiContext) // Create the builder using the QiContext.
+                    .withTexts("beginner", "one", "first") // Add the phrases Pepper will listen to.
+                    .build(); // Build the PhraseSet.
+
+            // Create the PhraseSet 1.
+            PhraseSet phraseSettwo = PhraseSetBuilder.with(qiContext) // Create the builder using the QiContext.
+                    .withTexts("complex", "two", "second") // Add the phrases Pepper will listen to.
+                    .build(); // Build the PhraseSet.
+
+            // Create the PhraseSet 1.
+            PhraseSet phraseSetthree = PhraseSetBuilder.with(qiContext) // Create the builder using the QiContext.
+                    .withTexts("advance", "three", "third") // Add the phrases Pepper will listen to.
+                    .build(); // Build the PhraseSet.
+
+
+            // Create a new listen action.
+            Listen listen = ListenBuilder.with(qiContext) // Create the builder with the QiContext.
+                    .withPhraseSets(phraseSetone, phraseSettwo,phraseSetthree) // Set the PhraseSets to listen to.
+                    .build();  // Build the listen action.
+
+
+            // Run the listen action and get the result.
+            ListenResult listenResult = listen.run();
+
+            // Identify the matched phrase set.
+            PhraseSet matchedPhraseSet = listenResult.getMatchedPhraseSet();
+            if (PhraseSetUtil.equals(matchedPhraseSet, phraseSetone)) {
+                Log.i("RoboticActivity ", "Heard phrase set: one");
+                Intent intent =new Intent(MainActivity.this, beginnersmovesActivity.class);
+                startActivity(intent);
+            } else if (PhraseSetUtil.equals(matchedPhraseSet, phraseSettwo)) {
+                Log.i("RoboticActivity ", "Heard phrase set: two");
+                Intent intent =new Intent(MainActivity.this, complexmovesActivity.class);
+                startActivity(intent);
+            } else if (PhraseSetUtil.equals(matchedPhraseSet, phraseSetthree)) {
+                Log.i("RoboticActivity ", "Heard phrase set: three");
+                Intent intent =new Intent(MainActivity.this, AdvancemovesActivity.class);
+                startActivity(intent);
+            }
+
+
+        }).start();
+
+    }
+
+
+
 }
-
-
-
-
-
-
-//
-//public class MainActivity extends RobotActivity implements RobotLifecycleCallbacks {
-//
-//    private QiContext qiContext;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        // Register the RobotLifecycleCallbacks to this Activity.
-//        QiSDK.register(this, this);
-//        Log.i("TAG","Run action started with success.");
-//
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        // Unregister the RobotLifecycleCallbacks for this Activity.
-//        QiSDK.unregister(this, this);
-//        super.onDestroy();
-//    }
-//
-//    @Override
-//    public void onRobotFocusGained(QiContext qiContext) {
-//        // The robot focus is gained.
-//        this.qiContext = qiContext;
-//        Log.i("TAG","Run action started with success.");
-//        // Create a new say action.
-//        Say say = SayBuilder.with(qiContext) // Create the builder with the context.
-//                .withText("Hello human!") // Set the text to say.
-//                .build(); // Build the say action.
-//        Log.i("TAG", "Build action started with success.");
-//        say.run();
-//        Log.i("TAG", "Say action finished with success.");
-//
-////        runAction();
-//    }
-//
-//
-//    @Override
-//    public void onRobotFocusLost() {
-//        // The robot focus is lost.
-//    }
-//
-//    @Override
-//    public void onRobotFocusRefused(String reason) {
-//        // The robot focus is refused.
-//    }
-//
-//    private void runAction() {
-//        Log.i("TAG","Inside run action started with success.");
-//        try {
-//            // Build an action synchronously.
-//            Say say = SayBuilder.with(qiContext) // Create a builder with the QiContext.
-//                    .withText("Hello!") // Specify the action parameters.
-//                    .build();
-//            Log.i("TAG", "Build action finished with success.");
-////            Animate animate = AnimationBuilder.with(qiContext)
-////                    .withResources(R.raw.my_animation)
-////                    .build();
-//            // Run the action synchronously and get the result.
-//            say.run();
-//            // Act on success.
-//            Log.i(TAG, "Say action finished with success.");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void holdAbilities(QiContext qiContext) {
-//        // Build the holder for the abilities.
-//        Holder holder = HolderBuilder.with(qiContext)
-//                .withAutonomousAbilities(
-//                        AutonomousAbilitiesType.BACKGROUND_MOVEMENT,
-//                        AutonomousAbilitiesType.BASIC_AWARENESS,
-//                        AutonomousAbilitiesType.AUTONOMOUS_BLINKING
-//                )
-//                .build();
-//
-//        // Hold the abilities asynchronously.
-//        Future<Void> holdFuture = holder.async().hold();
-//    }
-//}
+//I can show you how to do zumba dance. I have three levels for your interest 1,2,3.Every change comes from small begining. So lets start beginner level.

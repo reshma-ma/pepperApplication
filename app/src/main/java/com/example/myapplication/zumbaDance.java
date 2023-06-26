@@ -2,10 +2,23 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
+
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+//import android.view.View;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
+
+import android.widget.ImageView;
 
 import com.aldebaran.qi.sdk.QiContext;
 import com.aldebaran.qi.sdk.QiSDK;
@@ -19,35 +32,24 @@ import com.aldebaran.qi.sdk.object.actuation.Animation;
 import com.aldebaran.qi.sdk.object.conversation.Say;
 
 
-public class feedbackActivity extends RobotActivity implements RobotLifecycleCallbacks {
-//public class feedbackActivity extends AppCompatActivity {
+public class zumbaDance extends RobotActivity implements RobotLifecycleCallbacks {
+//public class zumbaDance extends AppCompatActivity {
+
 
     private QiContext qiContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feedback);
+        setContentView(R.layout.activity_zumba_dance2);
         QiSDK.register(this, this);
 
-        feedback();
-
-        Intent intent =new Intent(feedbackActivity.this, MainActivity.class);
+        danceZumba();
+        Intent intent =new Intent(zumbaDance.this, feedbackActivity.class);
         startActivity(intent);
 
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                Intent intent =new Intent(feedbackActivity.this, MainActivity.class);
-//                startActivity(intent);
-//
-//
-//                finish();
-//
-//            }
-//        },7000);
     }
+
 
     @Override
     protected void onDestroy() {
@@ -79,30 +81,31 @@ public class feedbackActivity extends RobotActivity implements RobotLifecycleCal
     }
 
 
-    private void feedback() {
-        Log.i("RoboticActivity","enter into feedback function entry");
+
+    private void danceZumba() {
+        Log.i("RoboticActivity","enter into danceZumba function entry");
         if (qiContext == null) {
             Log.i("RoboticActivity","qicontext is null");
             return;
         }
 
         new Thread(() -> {
-            Log.i("RoboticActivity","enter into feedback function thread");
+            Log.i("RoboticActivity","enter into danceZumba function thread");
 
             // Creating a Say action to make Pepper say
             Say sayGreeting = SayBuilder.with(qiContext)
-                    .withText("Wow!, That was amazing.you got three stars in beginer level")
+                    .withText("play music!")
                     .build();
 
             // Animation action for greeting movements
             Animation greetAnimation = AnimationBuilder.with(qiContext)
-                    .withResources(R.raw.welcome)  //  testing with clapping animation resource
+                    .withResources(R.raw.headraise)  //  testing with  animation resource
                     .build();
             Animate animate = AnimateBuilder.with(qiContext)
                     .withAnimation(greetAnimation)
                     .build();
             // Run the Say action and Animation action concurrently
-            sayGreeting.async().run();
+            sayGreeting.run();
             animate.async().run();
 
         }).start();

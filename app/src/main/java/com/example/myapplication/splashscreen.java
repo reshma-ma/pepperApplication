@@ -31,6 +31,7 @@ import com.aldebaran.qi.sdk.QiSDK;
 
 import com.aldebaran.qi.sdk.RobotLifecycleCallbacks;
 
+import com.aldebaran.qi.sdk.builder.AnimateBuilder;
 import com.aldebaran.qi.sdk.builder.AnimationBuilder;
 import com.aldebaran.qi.sdk.builder.HolderBuilder;
 import com.aldebaran.qi.sdk.builder.SayBuilder;
@@ -50,20 +51,25 @@ import android.os.Bundle;
 
 import java.text.CollationElementIterator;
 
-//public class splashscreen extends RobotActivity implements RobotLifecycleCallbacks {
-public class splashscreen extends AppCompatActivity {
+public class splashscreen extends RobotActivity implements RobotLifecycleCallbacks {
+//public class splashscreen extends AppCompatActivity {
 
 
     Animation up,down;
-    QiContext qiContext;
     ImageView imageView;
     TextView textView;
+
+    private QiContext qiContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        QiSDK.register(this, this);
         setContentView(R.layout.activity_splashscreen);
+
+
+        QiSDK.register(this, this);
+
         ImageView imageView= findViewById(R.id.splashApp);
         up= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.up);
         imageView.setAnimation(up);
@@ -78,8 +84,8 @@ public class splashscreen extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-//                makeRobotSpeak();
-//                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                welcomeToZumba();
+                ZumbaIntroduction();
                 Intent intent =new Intent(splashscreen.this, MainActivity.class);
                 startActivity(intent);
 
@@ -87,10 +93,103 @@ public class splashscreen extends AppCompatActivity {
                 finish();
 
             }
-        },6000);
+        },8000);
 
 
     }
+
+
+    @Override
+    protected void onDestroy() {
+        // Unregister the RobotLifecycleCallbacks
+        QiSDK.unregister(this, this);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onRobotFocusGained(QiContext qiContext) {
+        // The robot focus is gained.
+        Log.i("RoboticActivity", "Robot focus gained");
+        this.qiContext = qiContext;
+
+        // Update the TextView to notify that the Say action is done.
+        /*runOnUiThread(() -> {
+            Intent intent = new Intent(PepperActivity.this, MainActivity.class);
+            startActivity(intent);
+        });*/
+
+    }
+
+    @Override
+    public void onRobotFocusLost() {
+        // The robot focus is lost.
+        Log.i("RoboticActivity", "Robot focus lost");
+    }
+
+    @Override
+    public void onRobotFocusRefused(String reason) {
+        // The robot focus is refused.
+        Log.i("RoboticActivity", "Robot focus refused: " + reason);
+    }
+
+    private void welcomeToZumba() {
+        if (qiContext == null) {
+            return;
+        }
+
+        new Thread(() -> {
+            Log.i("RoboticActivity","enter into welcomeToZumba function");
+
+            // Creating a Say action to make Pepper say
+            Say sayWelcome = SayBuilder.with(qiContext)
+                    .withText("Welcome to Zumba dance,Lets Move!")
+                    .build();
+
+            // Animation action for greeting movements
+            com.aldebaran.qi.sdk.object.actuation.Animation greetAnimation = AnimationBuilder.with(qiContext)
+                    .withResources(R.raw.welcome)  //    animation resource
+                    .build();
+            Animate animate = AnimateBuilder.with(qiContext)
+                    .withAnimation(greetAnimation)
+                    .build();
+            // Run the Say action and Animation action concurrently
+            sayWelcome.async().run();
+            animate.async().run();
+
+        }).start();
+
+    }
+
+
+    private void ZumbaIntroduction() {
+        if (qiContext == null) {
+            return;
+        }
+
+        new Thread(() -> {
+            Log.i("RoboticActivity","enter into welcomeToZumba function");
+
+            // Creating a Say action to make Pepper say
+            Say sayIntroduction = SayBuilder.with(qiContext)
+                    .withText("do you know what is zumba?.Zumba is a dance fitness program. It is a combination of exercise and dance.Zumba have several benefits like, it promote physical activity, social interaction, and overall well-being among people")
+                    .build();
+
+            // Animation action for greeting movements
+            com.aldebaran.qi.sdk.object.actuation.Animation greetAnimation = AnimationBuilder.with(qiContext)
+                    .withResources(R.raw.introduction)  //    animation resource
+                    .build();
+            Animate animate = AnimateBuilder.with(qiContext)
+                    .withAnimation(greetAnimation)
+                    .build();
+            // Run the Say action and Animation action concurrently
+            sayIntroduction.async().run();
+            animate.async().run();
+
+        }).start();
+
+    }
+
+
 
 
 
