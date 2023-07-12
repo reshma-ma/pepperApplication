@@ -45,7 +45,7 @@ public class beginnersmovesActivity extends RobotActivity implements RobotLifecy
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_beginnersmoves);
-        QiSDK.register(this, this);
+        //QiSDK.register(this, this);
         teachDance();
 
         Intent intent =new Intent(beginnersmovesActivity.this, zumbaDance.class);
