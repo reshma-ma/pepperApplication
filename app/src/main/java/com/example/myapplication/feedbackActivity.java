@@ -12,11 +12,17 @@ import com.aldebaran.qi.sdk.QiSDK;
 import com.aldebaran.qi.sdk.RobotLifecycleCallbacks;
 import com.aldebaran.qi.sdk.builder.AnimateBuilder;
 import com.aldebaran.qi.sdk.builder.AnimationBuilder;
+import com.aldebaran.qi.sdk.builder.ListenBuilder;
+import com.aldebaran.qi.sdk.builder.PhraseSetBuilder;
 import com.aldebaran.qi.sdk.builder.SayBuilder;
 import com.aldebaran.qi.sdk.design.activity.RobotActivity;
 import com.aldebaran.qi.sdk.object.actuation.Animate;
 import com.aldebaran.qi.sdk.object.actuation.Animation;
+import com.aldebaran.qi.sdk.object.conversation.Listen;
+import com.aldebaran.qi.sdk.object.conversation.ListenResult;
+import com.aldebaran.qi.sdk.object.conversation.PhraseSet;
 import com.aldebaran.qi.sdk.object.conversation.Say;
+import com.aldebaran.qi.sdk.util.PhraseSetUtil;
 
 
 public class feedbackActivity extends RobotActivity implements RobotLifecycleCallbacks {
@@ -30,23 +36,7 @@ public class feedbackActivity extends RobotActivity implements RobotLifecycleCal
         setContentView(R.layout.activity_feedback);
         QiSDK.register(this, this);
 
-        feedback();
 
-        Intent intent =new Intent(feedbackActivity.this, MainActivity.class);
-        startActivity(intent);
-
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                Intent intent =new Intent(feedbackActivity.this, MainActivity.class);
-//                startActivity(intent);
-//
-//
-//                finish();
-//
-//            }
-//        },7000);
     }
 
     @Override
@@ -61,6 +51,8 @@ public class feedbackActivity extends RobotActivity implements RobotLifecycleCal
         // The robot focus is gained.
         Log.i("RoboticActivity", "Robot focus gained");
         this.qiContext = qiContext;
+
+        feedback();
 
 
 
@@ -91,7 +83,7 @@ public class feedbackActivity extends RobotActivity implements RobotLifecycleCal
 
             // Creating a Say action to make Pepper say
             Say sayGreeting = SayBuilder.with(qiContext)
-                    .withText("Wow!, That was amazing.you got three stars in beginer level")
+                    .withText("Wow!, That was amazing.you got three stars in beginer level. We have to practice more")
                     .build();
 
             // Animation action for greeting movements
@@ -104,6 +96,71 @@ public class feedbackActivity extends RobotActivity implements RobotLifecycleCal
             // Run the Say action and Animation action concurrently
             sayGreeting.async().run();
             animate.async().run();
+
+            Say sayQuestion = SayBuilder.with(qiContext)
+                    .withText("Do you want to continue?")
+                    .build();
+
+            // Animation action for greeting movements
+            Animation QuestionAnimation = AnimationBuilder.with(qiContext)
+                    .withResources(R.raw.question_right_hand_a001)
+                    .build();
+            Animate animateQuestion = AnimateBuilder.with(qiContext)
+                    .withAnimation(QuestionAnimation)
+                    .build();
+
+            sayQuestion.async().run();
+            animateQuestion.async().run();
+
+            // Create the PhraseSet yes.
+            PhraseSet phraseSetyes = PhraseSetBuilder.with(qiContext) // Create the builder using the QiContext.
+                    .withTexts("yes", "ya", "OK", "alright", "let's do this again") // Add the phrases Pepper will listen to.
+                    .build(); // Build the PhraseSet.
+
+            // Create the PhraseSet No.
+            PhraseSet phraseSetNo = PhraseSetBuilder.with(qiContext) // Create the builder using the QiContext.
+                    .withTexts("no", "Sorry", "I can't") // Add the phrases Pepper will listen to.
+                    .build(); // Build the PhraseSet.
+
+            // Create a new listen action.
+            Listen listen = ListenBuilder.with(qiContext) // Create the builder with the QiContext.
+                    .withPhraseSets(phraseSetyes, phraseSetNo) // Set the PhraseSets to listen to.
+                    .build();  // Build the listen action.
+
+            // Run the listen action and get the result.
+            ListenResult listenResult = listen.run();
+
+            // Identify the matched phrase set.
+            PhraseSet matchedPhraseSet = listenResult.getMatchedPhraseSet();
+            if (PhraseSetUtil.equals(matchedPhraseSet, phraseSetyes)) {
+                Log.i("RoboticActivity ", "Heard phrase set: yes");
+                Intent intent = new Intent(feedbackActivity.this, MainActivity.class);
+                startActivity(intent);
+            } else if (PhraseSetUtil.equals(matchedPhraseSet, phraseSetNo)) {
+
+                Log.i("RoboticActivity ", "Heard phrase set: No");
+                Say sayThankyou = SayBuilder.with(qiContext)
+                        .withText("Thank you for using the app.How you rate this app?")
+                        .build();
+
+                // Animation action for greeting movements
+                Animation ratingAnimation = AnimationBuilder.with(qiContext)
+                        .withResources(R.raw.question_right_hand_a001)
+                        .build();
+                Animate animateRating = AnimateBuilder.with(qiContext)
+                        .withAnimation(ratingAnimation)
+                        .build();
+
+                sayThankyou.async().run();
+                animateRating.async().run();
+
+                Intent intent = new Intent(feedbackActivity.this, RatingActivity.class);
+                startActivity(intent);
+
+
+                
+            }
+
 
         }).start();
 

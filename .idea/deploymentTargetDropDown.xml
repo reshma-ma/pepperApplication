@@ -7,11 +7,11 @@
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\hp\.android\avd\Pepper_1.9_API_33.avd" />
+            <value value="C:\Users\hp\.android\avd\Pepper_1.9_API_23.avd" />
           </Key>
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2023-05-31T08:43:55.189797100Z" />
+    <timeTargetWasSelectedWithDropDown value="2023-06-30T01:53:25.741295900Z" />
   </component>
 </project>

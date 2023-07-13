@@ -15,6 +15,9 @@
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
         <activity
+            android:name=".RatingActivity"
+            android:exported="false" />
+        <activity
             android:name=".zumbaDance"
             android:exported="false" />
         <activity

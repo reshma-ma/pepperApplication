@@ -64,7 +64,6 @@ public class splashscreen extends RobotActivity implements RobotLifecycleCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        QiSDK.register(this, this);
         setContentView(R.layout.activity_splashscreen);
 
 
@@ -86,8 +85,6 @@ public class splashscreen extends RobotActivity implements RobotLifecycleCallbac
             public void run() {
                 welcomeToZumba();
                 ZumbaIntroduction();
-                Intent intent =new Intent(splashscreen.this, MainActivity.class);
-                startActivity(intent);
 
 
                 finish();
@@ -111,12 +108,6 @@ public class splashscreen extends RobotActivity implements RobotLifecycleCallbac
         // The robot focus is gained.
         Log.i("RoboticActivity", "Robot focus gained");
         this.qiContext = qiContext;
-
-        // Update the TextView to notify that the Say action is done.
-        /*runOnUiThread(() -> {
-            Intent intent = new Intent(PepperActivity.this, MainActivity.class);
-            startActivity(intent);
-        });*/
 
     }
 
@@ -184,6 +175,9 @@ public class splashscreen extends RobotActivity implements RobotLifecycleCallbac
             // Run the Say action and Animation action concurrently
             sayIntroduction.async().run();
             animate.async().run();
+
+            Intent intent =new Intent(splashscreen.this, MainActivity.class);
+            startActivity(intent);
 
         }).start();
 

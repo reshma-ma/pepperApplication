@@ -48,7 +48,7 @@ import android.widget.ImageView;
 
 
 public class MainActivity extends RobotActivity implements RobotLifecycleCallbacks {
-//public class MainActivity extends AppCompatActivity {
+
 
 
     AppCompatButton btnbeginer,btncomplex,btnadvanced;
@@ -111,11 +111,7 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
         Log.i("RoboticActivity", "Robot focus gained");
         this.qiContext = qiContext;
 
-        // Update the TextView to notify that the Say action is done.
-        /*runOnUiThread(() -> {
-            Intent intent = new Intent(PepperActivity.this, MainActivity.class);
-            startActivity(intent);
-        });*/
+        chooseLevel();
 
     }
 
@@ -144,7 +140,7 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
 
             // Creating a Say action to make Pepper say
             Say sayGreeting = SayBuilder.with(qiContext)
-                    .withText("I can show you how to do zumba dance. I have three levels for your interest. one beginner level,two complex level, three advance level. Which level do you prefer?")
+                    .withText("I can show you how to do zumba dance. I have three levels for your interest. one beginner level,two complex level and three advance level. Which level do you prefer?")
                     .build();
 
             // Animation action for greeting movements
@@ -163,12 +159,12 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
                     .withTexts("beginner", "one", "first") // Add the phrases Pepper will listen to.
                     .build(); // Build the PhraseSet.
 
-            // Create the PhraseSet 1.
+            // Create the PhraseSet 2.
             PhraseSet phraseSettwo = PhraseSetBuilder.with(qiContext) // Create the builder using the QiContext.
                     .withTexts("complex", "two", "second") // Add the phrases Pepper will listen to.
                     .build(); // Build the PhraseSet.
 
-            // Create the PhraseSet 1.
+            // Create the PhraseSet 3.
             PhraseSet phraseSetthree = PhraseSetBuilder.with(qiContext) // Create the builder using the QiContext.
                     .withTexts("advance", "three", "third") // Add the phrases Pepper will listen to.
                     .build(); // Build the PhraseSet.
@@ -207,4 +203,3 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
 
 
 }
-//I can show you how to do zumba dance. I have three levels for your interest 1,2,3.Every change comes from small begining. So lets start beginner level.

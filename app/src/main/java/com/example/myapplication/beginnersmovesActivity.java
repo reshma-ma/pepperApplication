@@ -32,7 +32,7 @@ import com.aldebaran.qi.sdk.object.conversation.Say;
 
 
 public class beginnersmovesActivity extends RobotActivity implements RobotLifecycleCallbacks {
-//public class beginnersmovesActivity extends AppCompatActivity {
+
 
 
     MediaPlayer player;
@@ -46,10 +46,7 @@ public class beginnersmovesActivity extends RobotActivity implements RobotLifecy
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_beginnersmoves);
         //QiSDK.register(this, this);
-        teachDance();
 
-        Intent intent =new Intent(beginnersmovesActivity.this, zumbaDance.class);
-        startActivity(intent);
 //        Intent intent = getIntent();
 
 
@@ -70,6 +67,9 @@ public class beginnersmovesActivity extends RobotActivity implements RobotLifecy
         // The robot focus is gained.
         Log.i("RoboticActivity", "Robot focus gained");
         this.qiContext = qiContext;
+        teachDance();
+
+
 
 
 
@@ -208,6 +208,9 @@ public class beginnersmovesActivity extends RobotActivity implements RobotLifecy
 
             sayRepeatStep.async().run();
             repeatStepAnimate.async().run();
+
+            Intent intent =new Intent(beginnersmovesActivity.this, zumbaDance.class);
+            startActivity(intent);
 
 
         }).start();

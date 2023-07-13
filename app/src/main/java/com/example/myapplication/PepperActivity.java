@@ -72,8 +72,7 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
 //        });
         findViewById(R.id.button).setOnClickListener(v -> {
             greet();
-            Intent intent =new Intent(PepperActivity.this, splashscreen.class);
-            startActivity(intent);
+
 
         });
 
@@ -137,7 +136,7 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
 
             // Animation action for greeting movements
             Animation greetAnimation = AnimationBuilder.with(qiContext)
-                    .withResources(R.raw.hello_a010)  //  testing with clapping animation resource
+                    .withResources(R.raw.hello_a010)
                     .build();
             Animate animate = AnimateBuilder.with(qiContext)
                     .withAnimation(greetAnimation)
@@ -145,6 +144,9 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
             // Run the Say action and Animation action concurrently
             sayGreeting.async().run();
             animate.async().run();
+
+            Intent intent =new Intent(PepperActivity.this, splashscreen.class);
+            startActivity(intent);
 
         }).start();
 
