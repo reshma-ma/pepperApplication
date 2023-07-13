@@ -44,9 +44,7 @@ public class zumbaDance extends RobotActivity implements RobotLifecycleCallbacks
         setContentView(R.layout.activity_zumba_dance2);
         QiSDK.register(this, this);
 
-        danceZumba();
-        Intent intent =new Intent(zumbaDance.this, feedbackActivity.class);
-        startActivity(intent);
+
 
     }
 
@@ -64,6 +62,7 @@ public class zumbaDance extends RobotActivity implements RobotLifecycleCallbacks
         Log.i("RoboticActivity", "Robot focus gained");
         this.qiContext = qiContext;
 
+        danceZumba();
 
 
     }
@@ -106,7 +105,10 @@ public class zumbaDance extends RobotActivity implements RobotLifecycleCallbacks
                     .build();
             // Run the Say action and Animation action concurrently
             sayGreeting.run();
-            animate.async().run();
+            animate.run();
+
+            Intent intent =new Intent(zumbaDance.this, feedbackActivity.class);
+            startActivity(intent);
 
         }).start();
 
