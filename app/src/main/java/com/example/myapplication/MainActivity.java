@@ -1,20 +1,15 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
-import android.app.Notification;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
-import com.aldebaran.qi.Future;
 import com.aldebaran.qi.sdk.QiContext;
 
 import com.aldebaran.qi.sdk.QiSDK;
@@ -23,7 +18,7 @@ import com.aldebaran.qi.sdk.RobotLifecycleCallbacks;
 
 import com.aldebaran.qi.sdk.builder.AnimateBuilder;
 import com.aldebaran.qi.sdk.builder.AnimationBuilder;
-import com.aldebaran.qi.sdk.builder.HolderBuilder;
+
 import com.aldebaran.qi.sdk.builder.ListenBuilder;
 import com.aldebaran.qi.sdk.builder.PhraseSetBuilder;
 import com.aldebaran.qi.sdk.builder.SayBuilder;
@@ -36,11 +31,10 @@ import com.aldebaran.qi.sdk.object.conversation.Listen;
 import com.aldebaran.qi.sdk.object.conversation.ListenResult;
 import com.aldebaran.qi.sdk.object.conversation.PhraseSet;
 import com.aldebaran.qi.sdk.object.conversation.Say;
-import com.aldebaran.qi.sdk.object.holder.AutonomousAbilitiesType;
-import com.aldebaran.qi.sdk.object.holder.Holder;
+
 import com.aldebaran.qi.sdk.util.PhraseSetUtil;
 
-import android.widget.ImageView;
+
 
 
 
