@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.aldebaran.qi.Future;
 import com.aldebaran.qi.sdk.QiContext;
 
 import com.aldebaran.qi.sdk.QiSDK;
@@ -47,6 +48,8 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
 
     AppCompatButton btnbeginer,btncomplex,btnadvanced;
     private QiContext qiContext;
+    public boolean speakingCompleted=false;
+    public boolean animationCompleted=false;
 
 
     @Override
@@ -144,9 +147,46 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
             Animate animate = AnimateBuilder.with(qiContext)
                     .withAnimation(greetAnimation)
                     .build();
-            // Run the Say action and Animation action concurrently
-            sayGreeting.async().run();
-            animate.async().run();
+//            // Run the Say action and Animation action concurrently
+//            sayGreeting.async().run();
+//            animate.async().run();
+//
+
+
+
+
+            // Run the say action asynchronously and get the Future
+            Future<Void> sayFuture = sayGreeting.async().run();
+            Future<Void> animationFuture=animate.async().run();
+            sayFuture.thenConsume(stringFuture -> {
+                if (stringFuture.isSuccess()) {
+                    // Handle success state.
+                    // Access the value with stringFuture.get().
+                    speakingCompleted=true;
+                } else {
+
+                    Log.i("RoboticActivity","future in sayFuture error");
+                    // Handle error state.
+                    // Access the error with stringFuture.getError().
+                }
+            });
+
+            animationFuture.thenConsume(stringFuture -> {
+                if (stringFuture.isSuccess()) {
+                    // Handle success state.
+                    // Access the value with stringFuture.get().
+                    animationCompleted=true;
+                } else {
+
+                    Log.i("RoboticActivity","future in animationFuture error");
+                    // Handle error state.
+                    // Access the error with stringFuture.getError().
+                }
+            });
+
+
+
+
 
             // Create the PhraseSet 1.
             PhraseSet phraseSetone = PhraseSetBuilder.with(qiContext) // Create the builder using the QiContext.
@@ -169,25 +209,38 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
                     .withPhraseSets(phraseSetone, phraseSettwo,phraseSetthree) // Set the PhraseSets to listen to.
                     .build();  // Build the listen action.
 
+            if(animationCompleted==true && speakingCompleted==true){
 
-            // Run the listen action and get the result.
-            ListenResult listenResult = listen.run();
 
-            // Identify the matched phrase set.
-            PhraseSet matchedPhraseSet = listenResult.getMatchedPhraseSet();
-            if (PhraseSetUtil.equals(matchedPhraseSet, phraseSetone)) {
-                Log.i("RoboticActivity ", "Heard phrase set: one");
-                Intent intent =new Intent(MainActivity.this, beginnersmovesActivity.class);
-                startActivity(intent);
-            } else if (PhraseSetUtil.equals(matchedPhraseSet, phraseSettwo)) {
-                Log.i("RoboticActivity ", "Heard phrase set: two");
-                Intent intent =new Intent(MainActivity.this, complexmovesActivity.class);
-                startActivity(intent);
-            } else if (PhraseSetUtil.equals(matchedPhraseSet, phraseSetthree)) {
-                Log.i("RoboticActivity ", "Heard phrase set: three");
-                Intent intent =new Intent(MainActivity.this, AdvancemovesActivity.class);
-                startActivity(intent);
+                // Run the listen action and get the result.
+                ListenResult listenResult = listen.run();
+
+                // Identify the matched phrase set.
+                PhraseSet matchedPhraseSet = listenResult.getMatchedPhraseSet();
+                if (PhraseSetUtil.equals(matchedPhraseSet, phraseSetone)) {
+                    Log.i("RoboticActivity ", "Heard phrase set: one");
+                    Intent intent =new Intent(MainActivity.this, beginnersmovesActivity.class);
+                    startActivity(intent);
+                } else if (PhraseSetUtil.equals(matchedPhraseSet, phraseSettwo)) {
+                    Log.i("RoboticActivity ", "Heard phrase set: two");
+                    Intent intent =new Intent(MainActivity.this, complexmovesActivity.class);
+                    startActivity(intent);
+                } else if (PhraseSetUtil.equals(matchedPhraseSet, phraseSetthree)) {
+                    Log.i("RoboticActivity ", "Heard phrase set: three");
+                    Intent intent =new Intent(MainActivity.this, AdvancemovesActivity.class);
+                    startActivity(intent);
+                }
+                else{
+
+                    Intent intent =new Intent(MainActivity.this, beginnersmovesActivity.class);
+                    startActivity(intent);
+
+                }
+
+
             }
+
+
 
 
         }).start();

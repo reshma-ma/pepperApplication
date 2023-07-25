@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import android.widget.ImageView;
 
+import com.aldebaran.qi.Future;
 import com.aldebaran.qi.sdk.QiContext;
 import com.aldebaran.qi.sdk.QiSDK;
 import com.aldebaran.qi.sdk.RobotLifecycleCallbacks;
@@ -37,6 +38,7 @@ public class zumbaDance extends RobotActivity implements RobotLifecycleCallbacks
 
 
     private QiContext qiContext;
+    public boolean animationCompleted=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +90,24 @@ public class zumbaDance extends RobotActivity implements RobotLifecycleCallbacks
             return;
         }
 
+//                if(play==null){
+//            play =MediaPlayer.create(this,R.raw.song);
+//            play.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                @Override
+//                public void onCompletion(MediaPlayer mp) {
+//                    Log.i("RoboticActivity","music end");
+//                }
+//            });
+//        }
+//        play.start();
+
+
+
+
+
+
+
+
         new Thread(() -> {
             Log.i("RoboticActivity","enter into danceZumba function thread");
 
@@ -105,10 +125,36 @@ public class zumbaDance extends RobotActivity implements RobotLifecycleCallbacks
                     .build();
             // Run the Say action and Animation action concurrently
             sayGreeting.run();
-            animate.run();
 
-            Intent intent =new Intent(zumbaDance.this, feedbackActivity.class);
-            startActivity(intent);
+//            animate.run();
+            Future<Void> animationFuture=animate.async().run();
+            animationFuture.thenConsume(stringFuture -> {
+                if (stringFuture.isSuccess()) {
+                    // Handle success state.
+                    // Access the value with stringFuture.get().
+                    animationCompleted=true;
+                } else {
+
+                    Log.i("RoboticActivity","future in sayFuture error");
+                    // Handle error state.
+                    // Access the error with stringFuture.getError().
+                }
+            });
+
+            if(animationCompleted){
+
+                Intent intent =new Intent(zumbaDance.this, feedbackActivity.class);
+                startActivity(intent);
+
+            }
+
+            else{
+
+                Log.i("RoboticAvtivity","error in future inside zumbadance activity");
+                Intent intent =new Intent(zumbaDance.this, feedbackActivity.class);
+                startActivity(intent);
+            }
+
 
         }).start();
 

@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 import android.widget.ImageView;
 
+import com.aldebaran.qi.Future;
 import com.aldebaran.qi.sdk.QiContext;
 import com.aldebaran.qi.sdk.QiSDK;
 import com.aldebaran.qi.sdk.RobotLifecycleCallbacks;
@@ -38,6 +39,9 @@ public class beginnersmovesActivity extends RobotActivity implements RobotLifecy
     MediaPlayer player;
     ImageView imageView;
     private QiContext qiContext;
+    public boolean speakingCompleted=false;
+    public boolean animationCompleted=false;
+
 
 
 
@@ -146,7 +150,7 @@ public class beginnersmovesActivity extends RobotActivity implements RobotLifecy
 
             // Creating a Say action to make Pepper say
             Say sayBegin = SayBuilder.with(qiContext)
-                    .withText("Lets start beginner level!. I can teach you some steps before playing song.Every change comes from small begining.")
+                    .withText("Lets start beginner level!. I can show you steps by playing song.Every change comes from small begining.Repeat the steps with me and with the rhythm.")
                     .build();
 
             // Animation action for greeting movements
@@ -157,60 +161,108 @@ public class beginnersmovesActivity extends RobotActivity implements RobotLifecy
                     .withAnimation(teachAnimation)
                     .build();
             // Run the Say action and Animation action concurrently
-            sayBegin.async().run();
-            animate.run();
+//            sayBegin.async().run();
+            //            animate.run();
 
-            // Creating a Say action to make Pepper say
-            Say sayFirstStep = SayBuilder.with(qiContext)
-                    .withText("first head movement.")
-                    .build();
+            Future<Void> sayFuture = sayBegin.async().run();
+            Future<Void> animateFuture = animate.async().run();
 
-            // Animation action for first step movements
-            Animation firstStep = AnimationBuilder.with(qiContext)
-                    .withResources(R.raw.firststep)
-                    .build();
-            Animate firstStepAnimate = AnimateBuilder.with(qiContext)
-                    .withAnimation(firstStep)
-                    .build();
 
-            // Run the Say action and Animation action concurrently
-            sayFirstStep.async().run();
-            firstStepAnimate.run();
+            sayFuture.thenConsume(stringFuture -> {
+                if (stringFuture.isSuccess()) {
+                    // Handle success state.
+                    // Access the value with stringFuture.get().
+                    speakingCompleted=true;
+                } else {
 
-            // Creating a Say  second step action to make Pepper say
-            Say saySecondStep = SayBuilder.with(qiContext)
-                    .withText("second keep both legs in small distance then raise hands and put them down slowly like this")
-                    .build();
+                    Log.i("RoboticActivity","future in sayFuture error");
+                    // Handle error state.
+                    // Access the error with stringFuture.getError().
+                }
+            });
 
-            // Animation action for first step movements
-            Animation secondStep = AnimationBuilder.with(qiContext)
-                    .withResources(R.raw.secondstep)
-                    .build();
-            Animate secondStepAnimate = AnimateBuilder.with(qiContext)
-                    .withAnimation(secondStep)
-                    .build();
 
-            saySecondStep.async().run();
-            secondStepAnimate.run();
+            animateFuture.thenConsume(stringFuture -> {
+                if (stringFuture.isSuccess()) {
+                    // Handle success state.
+                    // Access the value with stringFuture.get().
+                    animationCompleted=true;
+                } else {
 
-            // Creating a Say  second step action to make Pepper say
-            Say sayRepeatStep = SayBuilder.with(qiContext)
-                    .withText("We have some other interesting steps also. Lets play music and repeat steps with me.Lets move!")
-                    .build();
+                    Log.i("RoboticActivity","future in sayFuture error");
+                    // Handle error state.
+                    // Access the error with stringFuture.getError().
+                    animationCompleted=false;
+                }
+            });
 
-            // Animation action for first step movements
-            Animation repeatStep = AnimationBuilder.with(qiContext)
-                    .withResources(R.raw.introduction)
-                    .build();
-            Animate repeatStepAnimate = AnimateBuilder.with(qiContext)
-                    .withAnimation(repeatStep)
-                    .build();
 
-            sayRepeatStep.async().run();
-            repeatStepAnimate.async().run();
 
-            Intent intent =new Intent(beginnersmovesActivity.this, zumbaDance.class);
-            startActivity(intent);
+            if(animationCompleted && speakingCompleted){
+                Intent intent =new Intent(beginnersmovesActivity.this, zumbaDance.class);
+                startActivity(intent);
+            }
+            else{
+                Log.i("RoboticActivty","future not worked in beginners activity");
+                Intent intent =new Intent(beginnersmovesActivity.this, zumbaDance.class);
+                startActivity(intent);
+            }
+
+
+
+
+
+
+
+//            // Creating a Say action to make Pepper say
+//            Say sayFirstStep = SayBuilder.with(qiContext)
+//                    .withText("first head movement.")
+//                    .build();
+//
+//            // Animation action for first step movements
+//            Animation firstStep = AnimationBuilder.with(qiContext)
+//                    .withResources(R.raw.firststep)
+//                    .build();
+//            Animate firstStepAnimate = AnimateBuilder.with(qiContext)
+//                    .withAnimation(firstStep)
+//                    .build();
+//
+//            // Run the Say action and Animation action concurrently
+//            sayFirstStep.async().run();
+//            firstStepAnimate.run();
+//
+//            // Creating a Say  second step action to make Pepper say
+//            Say saySecondStep = SayBuilder.with(qiContext)
+//                    .withText("second keep both legs in small distance then raise hands and put them down slowly like this")
+//                    .build();
+//
+//            // Animation action for first step movements
+//            Animation secondStep = AnimationBuilder.with(qiContext)
+//                    .withResources(R.raw.secondstep)
+//                    .build();
+//            Animate secondStepAnimate = AnimateBuilder.with(qiContext)
+//                    .withAnimation(secondStep)
+//                    .build();
+//
+//            saySecondStep.async().run();
+//            secondStepAnimate.run();
+//
+//            // Creating a Say  second step action to make Pepper say
+//            Say sayRepeatStep = SayBuilder.with(qiContext)
+//                    .withText("We have some other interesting steps also. Lets play music and repeat steps with me.Lets move!")
+//                    .build();
+//
+//            // Animation action for first step movements
+//            Animation repeatStep = AnimationBuilder.with(qiContext)
+//                    .withResources(R.raw.introduction)
+//                    .build();
+//            Animate repeatStepAnimate = AnimateBuilder.with(qiContext)
+//                    .withAnimation(repeatStep)
+//                    .build();
+//
+//            sayRepeatStep.async().run();
+//            repeatStepAnimate.async().run();
+
 
 
         }).start();

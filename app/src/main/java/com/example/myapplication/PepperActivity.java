@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,40 +51,31 @@ import android.widget.ImageView;
 import android.os.Bundle;
 
 import java.text.CollationElementIterator;
+import java.util.concurrent.ExecutionException;
+
 public class PepperActivity extends RobotActivity implements RobotLifecycleCallbacks {
 
 //    AppCompatButton buttonSayHello;
     TextView textView;
-    Button button;
+    MediaPlayer play;
+    public boolean animationCompleted = false;
+    public boolean speakingCompleted= false;
     private QiContext qiContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pepper_activity);
-
         QiSDK.register(this, this);
-        Log.i("RoboticActivity", "Enter into RobotActivity");
+//        Log.i("RoboticActivity", "Enter into RobotActivity");
 
-//        findViewById(R.id.textView2).setOnClickListener(v -> {
+
+//        findViewById(R.id.button).setOnClickListener(v -> {
 //            greet();
-//            Intent intent =new Intent(PepperActivity.this, splashscreen.class);
-//            startActivity(intent);
+//
+//
 //        });
-        findViewById(R.id.button).setOnClickListener(v -> {
-            greet();
 
-
-        });
-
-
-//        buttonSayHello=findViewById(R.id.button_say_hello);
-//        buttonSayHello.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                greet();
-//            }
-//        });
 
     }
     @Override
@@ -98,12 +90,7 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
         // The robot focus is gained.
         Log.i("RoboticActivity", "Robot focus gained");
         this.qiContext = qiContext;
-
-        // Update the TextView to notify that the Say action is done.
-        /*runOnUiThread(() -> {
-            Intent intent = new Intent(PepperActivity.this, MainActivity.class);
-            startActivity(intent);
-        });*/
+        greet();
 
     }
 
@@ -120,19 +107,21 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
     }
 
     private void greet() {
+
         Log.i("RoboticActivity","enter into greetings function entry");
         if (qiContext == null) {
             Log.i("RoboticActivity","qicontext is null");
-            return;
         }
 
         new Thread(() -> {
             Log.i("RoboticActivity","enter into greetings function thread");
 
+
             // Creating a Say action to make Pepper say
             Say sayGreeting = SayBuilder.with(qiContext)
-                    .withText("Hello, I am Pepper. Nice to meet you!")
+                    .withText("Hello, I am Pepper. Nice to meet you!. Welcome to zumba dance .lets Move!")
                     .build();
+
 
             // Animation action for greeting movements
             Animation greetAnimation = AnimationBuilder.with(qiContext)
@@ -142,13 +131,61 @@ public class PepperActivity extends RobotActivity implements RobotLifecycleCallb
                     .withAnimation(greetAnimation)
                     .build();
             // Run the Say action and Animation action concurrently
-            sayGreeting.async().run();
-            animate.async().run();
+            // Play the animation asynchronously and return the Future representing its completion
 
-            Intent intent =new Intent(PepperActivity.this, splashscreen.class);
-            startActivity(intent);
+//            sayGreeting.async().run();
+//            animate.async().run();
+
+            // Run the say action asynchronously and get the Future
+            Future<Void> sayFuture = sayGreeting.async().run();
+            Future<Void> animationFuture=animate.async().run();
+            sayFuture.thenConsume(stringFuture -> {
+                if (stringFuture.isSuccess()) {
+                    // Handle success state.
+                    // Access the value with stringFuture.get().
+                    speakingCompleted=true;
+                } else {
+
+                    Log.i("RoboticActivity","future in sayFuture error");
+                    // Handle error state.
+                    // Access the error with stringFuture.getError().
+                }
+            });
+
+            animationFuture.thenConsume(stringFuture -> {
+                if (stringFuture.isSuccess()) {
+                    // Handle success state.
+                    // Access the value with stringFuture.get().
+                    animationCompleted=true;
+                } else {
+
+                    Log.i("RoboticActivity","future in animationFuture error");
+                    // Handle error state.
+                    // Access the error with stringFuture.getError().
+                }
+            });
+
+
+            if(speakingCompleted && animationCompleted){
+
+                Intent intent =new Intent(PepperActivity.this, splashscreen.class);
+                startActivity(intent);
+
+            }
+            else{
+               Log.i("RoboticActivity","error in future inside pepperActivity");
+            }
+
+
+
+
+
+//            Intent intent =new Intent(PepperActivity.this, splashscreen.class);
+//            startActivity(intent);
 
         }).start();
+
+
 
     }
 }

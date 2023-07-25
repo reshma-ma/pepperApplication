@@ -83,8 +83,11 @@ public class splashscreen extends RobotActivity implements RobotLifecycleCallbac
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                welcomeToZumba();
-                ZumbaIntroduction();
+//                welcomeToZumba();
+//                ZumbaIntroduction();
+
+                Intent intent =new Intent(splashscreen.this, MainActivity.class);
+                startActivity(intent);
 
 
                 finish();
